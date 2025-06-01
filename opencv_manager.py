@@ -52,7 +52,7 @@ def overlayImages(backgroundImage: cv2.typing.MatLike, foregroundImage: cv2.typi
     return outImg
     
 
-def embedWatermark(imgPath: str, logoPath: str, spacing: int, offsetX: int, offsetY: int, opacity: float, logoScale: float) -> cv2.typing.MatLike:
+def embedWatermark(imgPath: str, logoPath: str, spacing: float, offsetX: int, offsetY: int, opacity: float, logoScale: float) -> cv2.typing.MatLike:
     img = readImage(imgPath)
     logo = readImage(logoPath)
 
@@ -63,12 +63,13 @@ def embedWatermark(imgPath: str, logoPath: str, spacing: int, offsetX: int, offs
     imgHeight, imgWidth, _ = img.shape
 
     i = 0
-    for x in range(offsetX, imgWidth - logoWidth, spacing):
+    for x in range(offsetX, imgWidth - logoWidth, int(spacing * logoWidth)):
         i += 1
         j = 0
-        for y in range(offsetY, imgHeight - logoHeight, spacing):
+        for y in range(offsetY, imgHeight - logoHeight, int(spacing * logoHeight)):
             j += 1
-            if (i + j) % 2 == 1:
-                img = overlayImages(img, logo, x, y, opacity)
+            if (i + j) % 2 != 1:
+                continue
+            img = overlayImages(img, logo, x, y, opacity)
     
     return cropImage(img, logoWidth, logoHeight, imgWidth - logoWidth, imgHeight - logoHeight)

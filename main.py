@@ -1,5 +1,4 @@
 import pathlib
-import os.path
 from opencv_manager import embedWatermark, displayImage, writeImage
 
 def getImagesPaths(startDir: str) -> list[str]:
@@ -11,12 +10,11 @@ def getImagesPaths(startDir: str) -> list[str]:
 
 inputDir = 'input'
 outputDir = 'output'
-logoLightImagePath = 'assets/logo.png'
-logoDarkImagePath = 'assets/logo-inverted.png'
-offsetX = 50
-offsetY = 50
-opacity = 0.5
-spacing = 500
+logoImagePath = 'assets/logo-no-background-cropped-light-grey.png'
+offsetX = 200
+offsetY = 200
+opacity = 0.4
+spacing = 1.8
 logoScale = 0.5
 
 def main():
@@ -30,13 +28,9 @@ def main():
         printProgressBar(currentImageIdx, totalImages)
         outPath = outputDir + img.removeprefix(inputDir)
 
-        # file already exisits no need to re-process it
-        if os.path.isfile(outPath):
-            print(outPath + " already exists.")
-            continue
-
-        img = embedWatermark(img, logoLightImagePath, spacing, offsetX, offsetY, opacity, logoScale)
+        img = embedWatermark(img, logoImagePath, spacing, offsetX, offsetY, opacity, logoScale)
         # displayImage(img)
+        # break
         writeImage(img, outPath)
     
     print()

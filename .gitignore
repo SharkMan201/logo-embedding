@@ -175,9 +175,6 @@ cython_debug/
 out/*
 output/*
 
-#Ignore assets
-assets/*
-
 #Ignore Input
 input/*
 
