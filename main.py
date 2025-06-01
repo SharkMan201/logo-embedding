@@ -1,7 +1,6 @@
-import glob
 import pathlib
-from moviepy_manager import MoviePyManager
 import os.path
+from opencv_manager import embedWatermark, displayImage, writeImage
 
 def getImagesPaths(startDir: str) -> list[str]:
     ret: list[str] = []
@@ -14,12 +13,21 @@ inputDir = 'input'
 outputDir = 'output'
 logoLightImagePath = 'assets/logo.png'
 logoDarkImagePath = 'assets/logo-inverted.png'
+offsetX = 50
+offsetY = 50
+opacity = 0.5
+spacing = 500
+logoScale = 0.5
 
 def main():
     imagePaths = getImagesPaths(inputDir)
-    moviepyManager: MoviePyManager = MoviePyManager()
+
+    totalImages = len(imagePaths)
+    currentImageIdx = 0
 
     for img in imagePaths:
+        currentImageIdx += 1
+        printProgressBar(currentImageIdx, totalImages)
         outPath = outputDir + img.removeprefix(inputDir)
 
         # file already exisits no need to re-process it
@@ -27,9 +35,33 @@ def main():
             print(outPath + " already exists.")
             continue
 
-        moviepyManager.EmbedLogo(logoLightImagePath, logoDarkImagePath, img, outPath)
+        img = embedWatermark(img, logoLightImagePath, spacing, offsetX, offsetY, opacity, logoScale)
+        # displayImage(img)
+        writeImage(img, outPath)
+    
+    print()
 
-        # break
+# Print iterations progress
+def printProgressBar(iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # Print New Line on Complete
+    if iteration == total: 
+        print()
 
 if __name__ == '__main__':
     main()
