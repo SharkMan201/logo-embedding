@@ -173,5 +173,13 @@ cython_debug/
 
 # Ignore generated files
 out/*
+output/*
+
+#Ignore assets
+assets/*
+
+#Ignore Input
+input/*
+
 # Except this file
 !.gitkeep
